@@ -8,9 +8,14 @@ import { EVENT_TYPES } from '../constants/events';
 
 type EventType = Event['type'];
 
+type EventMeta = {
+  addedDate: number;
+};
+
 type EventsState = {
   // Data
   events: Event[];
+  eventsMeta: Map<string, EventMeta>;
   sources: Set<string>;
 
   // Filters
@@ -58,6 +63,7 @@ export const useEventsStore = create<EventsState>()(
     immer((set) => ({
       // Initial state
       events: [],
+      eventsMeta: new Map<string, EventMeta>(),
       sources: new Set<string>(),
 
       selectedTypes: new Set(EVENT_TYPES),
@@ -70,9 +76,13 @@ export const useEventsStore = create<EventsState>()(
       addEvent: (event) =>
         set((draft) => {
           draft.events.unshift(event);
+          draft.eventsMeta.set(event.id, { addedDate: Date.now() });
 
           if (draft.events.length > MAX_EVENTS) {
-            draft.events.pop();
+            const removedEvent = draft.events.pop();
+            if (removedEvent) {
+              draft.eventsMeta.delete(removedEvent.id);
+            }
           }
 
           draft.sources.add(event.source);
@@ -85,12 +95,18 @@ export const useEventsStore = create<EventsState>()(
             .slice(0, MAX_EVENTS);
 
           draft.events = sortedEvents;
+          draft.eventsMeta.clear();
+          const now = Date.now();
+          sortedEvents.forEach((event) => {
+            draft.eventsMeta.set(event.id, { addedDate: now });
+          });
           draft.sources = new Set(sortedEvents.map((event) => event.source));
         }),
 
       clearEvents: () =>
         set((draft) => {
           draft.events = [];
+          draft.eventsMeta.clear();
           draft.sources.clear();
           draft.selectedEventId = null;
         }),

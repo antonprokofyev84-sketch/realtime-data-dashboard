@@ -1,43 +1,31 @@
 import { useDeferredValue } from 'react';
 import { useEventsStore, useFilteredEvents } from '../../store/useEventsStore';
-import {
-  ListContainer,
-  EventRow,
-  Header,
-  TypeBadge,
-  Dot,
-  Time,
-  Message,
-  Footer,
-  Label,
-  SourceValue,
-} from './EventList.styles';
+import { EventRow } from './EventRow';
+import { ListContainer } from './EventList.styles';
+
+const NEW_ITEM_DURATION = 5000;
 
 export function EventList() {
   const events = useFilteredEvents();
   const deferredEvents = useDeferredValue(events);
   const selectEvent = useEventsStore((state) => state.selectEvent);
+  const eventsMeta = useEventsStore((state) => state.eventsMeta);
 
   return (
     <ListContainer>
-      {deferredEvents.map((event) => (
-        <EventRow key={event.id} $type={event.type} onClick={() => selectEvent(event.id)}>
-          <Header>
-            <TypeBadge $type={event.type}>
-              <Dot $type={event.type} />
-              {event.type.toUpperCase()}
-            </TypeBadge>
-            <Time>{new Date(event.timestamp).toLocaleTimeString()}</Time>
-          </Header>
+      {deferredEvents.map((event) => {
+        const meta = eventsMeta.get(event.id);
+        const isNew = meta ? Date.now() - meta.addedDate < NEW_ITEM_DURATION : false;
 
-          <Message>{event.message}</Message>
-
-          <Footer>
-            <Label>Source:</Label>
-            <SourceValue>{event.source}</SourceValue>
-          </Footer>
-        </EventRow>
-      ))}
+        return (
+          <EventRow
+            key={event.id}
+            event={event}
+            isNew={isNew}
+            onClick={() => selectEvent(event.id)}
+          />
+        );
+      })}
     </ListContainer>
   );
 }
