@@ -1,3 +1,4 @@
+import { useShallow } from 'zustand/shallow';
 import {
   FiltersContainer,
   FiltersRow,
@@ -10,23 +11,36 @@ import {
   VerticalDivider,
 } from './FiltersPanel.styles';
 import { EVENT_TYPES } from '../../constants/events';
+import { useEventsStore } from '../../store/useEventsStore';
 
-type FiltersPanelProps = {
-  sources: string[];
-};
+export function FiltersPanel() {
+  const sources = useEventsStore(useShallow((state) => Array.from(state.sources)));
+  const messageQuery = useEventsStore((state) => state.messageQuery);
+  const selectedSource = useEventsStore((state) => state.selectedSource);
+  const selectedTypes = useEventsStore((state) => state.selectedTypes);
 
-export function FiltersPanel({ sources }: FiltersPanelProps) {
+  const setMessageQuery = useEventsStore((state) => state.setMessageQuery);
+  const setSelectedSource = useEventsStore((state) => state.setSelectedSource);
+  const toggleEventType = useEventsStore((state) => state.toggleEventType);
+
   return (
     <FiltersContainer>
       <FiltersRow>
         <FilterGroup>
           <FilterLabel>Search</FilterLabel>
-          <Input placeholder="Search messages or sources..." />
+          <Input
+            placeholder="Search messages or sources..."
+            value={messageQuery}
+            onChange={(e) => setMessageQuery(e.target.value)}
+          />
         </FilterGroup>
 
         <FilterGroup>
           <FilterLabel>Source</FilterLabel>
-          <Select>
+          <Select
+            value={selectedSource || 'all'}
+            onChange={(e) => setSelectedSource(e.target.value === 'all' ? null : e.target.value)}
+          >
             <option value="all">All Sources</option>
             {sources.map((source) => (
               <option key={source} value={source}>
@@ -43,7 +57,11 @@ export function FiltersPanel({ sources }: FiltersPanelProps) {
           <CheckboxGroup>
             {EVENT_TYPES.map((type) => (
               <CheckboxLabel key={type}>
-                <input type="checkbox" defaultChecked />
+                <input
+                  type="checkbox"
+                  checked={selectedTypes.has(type)}
+                  onChange={() => toggleEventType(type)}
+                />
                 <span style={{ textTransform: 'capitalize' }}>{type}</span>
               </CheckboxLabel>
             ))}

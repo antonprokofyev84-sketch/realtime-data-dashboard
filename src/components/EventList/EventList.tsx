@@ -1,4 +1,5 @@
-import type { Event } from '../../types/Event';
+import { useDeferredValue } from 'react';
+import { useFilteredEvents } from '../../store/useEventsStore';
 import {
   ListContainer,
   EventRow,
@@ -12,14 +13,13 @@ import {
   SourceValue,
 } from './EventList.styles';
 
-type EventListProps = {
-  events: Event[];
-};
+export function EventList() {
+  const events = useFilteredEvents();
+  const deferredEvents = useDeferredValue(events);
 
-export function EventList({ events }: EventListProps) {
   return (
     <ListContainer>
-      {events.map((event) => (
+      {deferredEvents.map((event) => (
         <EventRow key={event.id} $type={event.type}>
           <Header>
             <TypeBadge $type={event.type}>
