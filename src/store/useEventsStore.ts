@@ -5,7 +5,6 @@ import { useShallow } from 'zustand/shallow';
 
 import type { Event } from '../types/Event';
 import { EVENT_TYPES } from '../constants/events';
-import { mockEvents } from '../data/mockEvents';
 
 type EventType = Event['type'];
 
@@ -58,7 +57,7 @@ export const useEventsStore = create<EventsState>()(
   persist(
     immer((set) => ({
       // Initial state
-      events: mockEvents, //[],
+      events: [],
       sources: new Set<string>(),
 
       selectedTypes: new Set(EVENT_TYPES),
@@ -156,5 +155,8 @@ export const selectFilteredEvents = (state: EventsState): Event[] => {
     return matchesType && matchesSource && matchesSearch;
   });
 };
+
+export const selectEventById = (id: string | null) => (state: EventsState) =>
+  state.events.find((event) => event.id === id);
 
 export const useFilteredEvents = () => useEventsStore(useShallow(selectFilteredEvents));

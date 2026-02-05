@@ -1,5 +1,5 @@
 import { useDeferredValue } from 'react';
-import { useFilteredEvents } from '../../store/useEventsStore';
+import { useEventsStore, useFilteredEvents } from '../../store/useEventsStore';
 import {
   ListContainer,
   EventRow,
@@ -16,11 +16,12 @@ import {
 export function EventList() {
   const events = useFilteredEvents();
   const deferredEvents = useDeferredValue(events);
+  const selectEvent = useEventsStore((state) => state.selectEvent);
 
   return (
     <ListContainer>
       {deferredEvents.map((event) => (
-        <EventRow key={event.id} $type={event.type}>
+        <EventRow key={event.id} $type={event.type} onClick={() => selectEvent(event.id)}>
           <Header>
             <TypeBadge $type={event.type}>
               <Dot $type={event.type} />
