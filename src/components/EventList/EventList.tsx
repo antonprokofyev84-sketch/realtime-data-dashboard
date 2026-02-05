@@ -8,7 +8,6 @@ import {
   Time,
   Message,
   Footer,
-  SourceWrapper,
   Label,
   SourceValue,
 } from './EventList.styles';
@@ -33,10 +32,8 @@ export function EventList({ events }: EventListProps) {
           <Message>{event.message}</Message>
 
           <Footer>
-            <SourceWrapper>
-              <Label>Source:</Label>
-              <SourceValue>{event.source}</SourceValue>
-            </SourceWrapper>
+            <Label>Source:</Label>
+            <SourceValue>{event.source}</SourceValue>
           </Footer>
         </EventRow>
       ))}

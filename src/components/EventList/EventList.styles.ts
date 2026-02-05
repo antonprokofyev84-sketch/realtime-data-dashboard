@@ -6,27 +6,19 @@ export const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 16px;
-  background-color: #f8fafc;
 `;
 
-export const EventRow = styled.div<{ $type: Event['type'] }>`
+export const EventRow = styled.div<{ $type: Event['type']; $isSelected?: boolean }>`
   background: ${COLORS.neutral.surface};
-  border: 1px solid ${COLORS.neutral.border};
+  border: 1px solid
+    ${(props) => (props.$isSelected ? COLORS[props.$type].border : COLORS.neutral.border)};
   border-left: 4px solid ${(props) => COLORS[props.$type].border};
-  border-radius: 8px;
-  padding: 12px 16px;
+  border-radius: 6px;
+  padding: 12px;
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
 
   &:hover {
     border-color: ${(props) => COLORS[props.$type].border};
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
-
-  &:active {
-    transform: translateY(0);
   }
 `;
 
@@ -34,7 +26,7 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `;
 
 export const TypeBadge = styled.div<{ $type: Event['type'] }>`
@@ -42,10 +34,10 @@ export const TypeBadge = styled.div<{ $type: Event['type'] }>`
   align-items: center;
   gap: 6px;
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: 4px;
   background: ${(props) => COLORS[props.$type].bg};
   color: ${(props) => COLORS[props.$type].text};
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 `;
 
@@ -57,34 +49,30 @@ export const Dot = styled.span<{ $type: Event['type'] }>`
 `;
 
 export const Time = styled.span`
-  font-size: 12px;
+  font-size: 11px;
   color: ${COLORS.neutral.textMuted};
 `;
 
 export const Message = styled.div`
-  margin-bottom: 12px;
-  font-size: 16px;
+  font-size: 14px;
   color: ${COLORS.neutral.textMain};
+  margin-bottom: 8px;
 `;
 
 export const Footer = styled.div`
-  padding-top: 8px;
-  border-top: 1px solid #f1f5f9;
-`;
-
-export const SourceWrapper = styled.div`
   display: flex;
-  align-items: center;
-  gap: 6px;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid ${COLORS.neutral.border};
 `;
 
 export const Label = styled.span`
-  font-size: 12px;
-  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${COLORS.neutral.textMuted};
 `;
 
 export const SourceValue = styled.span`
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 11px;
+  color: ${COLORS.neutral.textMain};
 `;

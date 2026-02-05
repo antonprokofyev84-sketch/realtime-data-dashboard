@@ -1,4 +1,6 @@
-export type EventType = 'info' | 'warning' | 'error';
+import type { EVENT_TYPES } from '../constants/events';
+
+export type EventType = (typeof EVENT_TYPES)[number];
 
 export type Event = {
   id: string;
