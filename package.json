@@ -12,6 +12,7 @@
     "format:write": "prettier . --write"
   },
   "dependencies": {
+    "@tanstack/react-virtual": "^3.13.18",
     "immer": "^11.1.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

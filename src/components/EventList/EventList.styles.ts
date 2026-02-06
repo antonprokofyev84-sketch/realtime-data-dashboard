@@ -3,9 +3,21 @@ import type { Event } from '../../types/Event';
 import { COLORS } from '../../constants/colors';
 
 export const ListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex: 1;
+  overflow: auto;
+  width: 100%;
+`;
+
+export const VirtualizerInner = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const VirtualizerItem = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 `;
 
 const highlightFade = keyframes`
@@ -31,6 +43,7 @@ export const EventRowContainer = styled.div<{ $type: Event['type']; $isNew?: boo
   padding: 12px;
   cursor: pointer;
   transition: border-color 0.2s;
+  margin-bottom: 8px;
 
   ${(props) =>
     props.$isNew &&
