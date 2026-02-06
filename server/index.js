@@ -38,7 +38,7 @@ wss.on("connection", (socket) => {
     }
   });
 
-  generator.start();
+  generator.start({ minDelayMs: 100, maxDelayMs: 1000 });
 
   const stopGenerator = () => generator.stop();
   socket.on("close", stopGenerator);

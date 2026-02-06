@@ -19,7 +19,7 @@ export function EventList() {
   const virtualizer = useVirtualizer({
     count: deferredEvents?.length || 0,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 104,
+    estimateSize: () => 112,
     overscan: 30,
   });
 
