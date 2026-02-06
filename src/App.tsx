@@ -1,14 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { EventList } from './components/EventList/EventList';
 import { FiltersPanel } from './components/Filters/FiltersPanel';
+import { ControlPanel } from './components/ControlPanel/ControlPanel';
 import { useEventsStore } from './store/useEventsStore';
 import { mockEvents } from './data/mockEvents';
 import { EventDetailsPanel } from './components/EventDetails/EventDetailsPanel';
 import { EventGenerator } from './data/eventGenerator';
+import { AppContainer, AppTitle } from './App.styles';
 
 export function App() {
   const setEvents = useEventsStore((state) => state.setEvents);
   const addEvent = useEventsStore((s) => s.addEvent);
+  const generatorRef = useRef(new EventGenerator(addEvent));
 
   useEffect(() => {
     // Simulate fetching initial data from server
@@ -16,18 +19,19 @@ export function App() {
   }, [setEvents]);
 
   useEffect(() => {
-    const generator = new EventGenerator(addEvent);
-    generator.start();
-    return () => generator.stop();
-  }, [addEvent]);
+    return () => {
+      generatorRef.current.stop();
+    };
+  }, []);
 
   return (
-    <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 16px' }}>
-      <h1 style={{ marginBottom: 16 }}>Real-Time Data Dashboard</h1>
+    <AppContainer>
+      <AppTitle>Real-Time Data Dashboard</AppTitle>
+      <ControlPanel generator={generatorRef.current} />
       <FiltersPanel />
       <EventList />
       <EventDetailsPanel />
-    </div>
+    </AppContainer>
   );
 }
 
