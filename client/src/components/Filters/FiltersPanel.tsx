@@ -1,3 +1,4 @@
+import { useDeferredValue, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/shallow';
 import {
   FiltersContainer,
@@ -23,6 +24,15 @@ export function FiltersPanel() {
   const setSelectedSource = useEventsStore((state) => state.setSelectedSource);
   const toggleEventType = useEventsStore((state) => state.toggleEventType);
 
+  const [inputValue, setInputValue] = useState(messageQuery);
+  const deferredQuery = useDeferredValue(inputValue);
+
+  useEffect(() => {
+    if (deferredQuery !== messageQuery) {
+      setMessageQuery(deferredQuery);
+    }
+  }, [deferredQuery, messageQuery, setMessageQuery]);
+
   return (
     <FiltersContainer>
       <FiltersRow>
@@ -30,8 +40,8 @@ export function FiltersPanel() {
           <FilterLabel>Search</FilterLabel>
           <Input
             placeholder="Search messages or sources..."
-            value={messageQuery}
-            onChange={(e) => setMessageQuery(e.target.value)}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
           />
         </FilterGroup>
 

@@ -3,7 +3,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { useEventsStore, useFilteredEvents } from '../../store/useEventsStore';
 import { EventRow } from './EventRow';
-import { ListContainer, VirtualizerInner, VirtualizerItem } from './EventList.styles';
+import { EmptyState, ListContainer, VirtualizerInner, VirtualizerItem } from './EventList.styles';
 
 const NEW_ITEM_DURATION = 5000;
 
@@ -22,6 +22,14 @@ export function EventList() {
     estimateSize: () => 112,
     overscan: 30,
   });
+
+  if (!deferredEvents.length) {
+    return (
+      <ListContainer ref={parentRef}>
+        <EmptyState>No events yet.</EmptyState>
+      </ListContainer>
+    );
+  }
 
   return (
     <ListContainer ref={parentRef}>

@@ -20,6 +20,19 @@ export const VirtualizerItem = styled.div`
   width: 100%;
 `;
 
+export const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 104px;
+  height: 100%;
+  background: ${COLORS.neutral.surface};
+  border: 1px solid ${COLORS.neutral.border};
+  border-radius: 8px;
+  color: ${COLORS.neutral.textMuted};
+  font-size: 32px;
+`;
+
 const highlightFade = keyframes`
   0% {
     background: var(--highlight-bg);
