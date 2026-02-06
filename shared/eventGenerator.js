@@ -1,47 +1,21 @@
-import type { Event } from '../types/Event';
+import { EVENT_MESSAGES, EVENT_SOURCES, EVENT_TYPES } from "./events.js";
 
-type StartOptions = {
-  minDelayMs?: number;
-  maxDelayMs?: number;
-};
-
-type EventListener = (event: Event) => void;
-
-const EVENT_MESSAGES = [
-  'User login successful',
-  'Payment processed',
-  'File uploaded',
-  'API request failed',
-  'Database connection lost',
-  'Cache invalidated',
-  'New order created',
-  'Email sent to customer',
-];
-
-const EVENT_SOURCES = [
-  'auth-service',
-  'payments-service',
-  'storage-service',
-  'api-gateway',
-  'database',
-  'cache-layer',
-];
-
-const EVENT_TYPES: Event['type'][] = ['info', 'warning', 'error'];
+const DEFAULT_MIN_DELAY = 500;
+const DEFAULT_MAX_DELAY = 2000;
 
 export class EventGenerator {
-  private isRunning = false;
-  private timeoutId: number | null = null;
-  private listener: EventListener;
+  isRunning = false;
+  timeoutId = null;
+  listener;
 
-  private minDelayMs = 500;
-  private maxDelayMs = 2000;
+  minDelayMs = DEFAULT_MIN_DELAY;
+  maxDelayMs = DEFAULT_MAX_DELAY;
 
-  constructor(listener: EventListener) {
+  constructor(listener) {
     this.listener = listener;
   }
 
-  start(options?: StartOptions) {
+  start(options) {
     if (this.isRunning) return;
 
     const nextMinDelayMs = options?.minDelayMs ?? this.minDelayMs;
@@ -58,27 +32,26 @@ export class EventGenerator {
     this.isRunning = false;
 
     if (this.timeoutId !== null) {
-      window.clearTimeout(this.timeoutId);
+      globalThis.clearTimeout(this.timeoutId);
       this.timeoutId = null;
     }
   }
 
-  private scheduleNext() {
+  scheduleNext() {
     if (!this.isRunning) return;
 
     const delay = this.randomBetween(this.minDelayMs, this.maxDelayMs);
 
-    this.timeoutId = window.setTimeout(() => {
+    this.timeoutId = globalThis.setTimeout(() => {
       const event = this.generateEvent();
       this.listener(event);
-
       this.scheduleNext();
     }, delay);
   }
 
-  private generateEvent(): Event {
+  generateEvent() {
     return {
-      id: crypto.randomUUID(),
+      id: getRandomUUID(),
       type: this.randomFrom(EVENT_TYPES),
       message: this.randomFrom(EVENT_MESSAGES),
       timestamp: Date.now(),
@@ -86,14 +59,22 @@ export class EventGenerator {
     };
   }
 
-  private randomFrom<T>(array: T[]): T {
+  randomFrom(array) {
     return array[Math.floor(Math.random() * array.length)];
   }
 
-  private randomBetween(min: number, max: number): number {
+  randomBetween(min, max) {
     const safeMin = Math.max(0, Math.floor(min));
     const safeMax = Math.max(safeMin, Math.floor(max));
 
     return Math.floor(Math.random() * (safeMax - safeMin + 1)) + safeMin;
   }
 }
+
+const getRandomUUID = () => {
+  if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `event-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+};
